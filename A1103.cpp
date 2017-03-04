@@ -1,0 +1,67 @@
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int n, k, p, maxFacSum = -1;
+
+vector<int> fac, ans, temp;
+
+int power(int x)
+{
+    int ans = 1;
+    for(int i = 0;i < p;i++)
+    {
+        ans *= x;
+    }
+    return ans;
+}
+
+void init()
+{
+    for(int i = 0;power(i) <= n;i++)
+    {
+        fac.push_back(power(i));
+    }
+}
+
+void DFS(int index, int curNum, int sum, int facSum)
+{
+    if(sum == n && curNum == k)
+    {
+        if(facSum > maxFacSum)
+        {
+            ans = temp;
+            maxFacSum = facSum;
+        }
+        return;
+    }
+    if(sum > n || curNum > k)
+        return;
+    if(index - 1 >= 0)
+    {
+        temp.push_back(index);
+        DFS(index, curNum + 1, sum + fac[index], facSum + index);
+        temp.pop_back();
+        DFS(index - 1, curNum, sum, facSum);
+    }
+}
+
+int main()
+{
+    scanf("%d%d%d", &n, &k, &p);
+    init();
+    DFS(fac.size() - 1, 0, 0, 0);
+    if(maxFacSum == -1)
+        printf("Impossible\n");
+    else
+    {
+        printf("%d = %d^%d", n, ans[0], p);
+        for(int i = 1;i < ans.size();i++)
+        {
+            printf(" + %d^%d", ans[i], p);
+        }
+    }
+
+    return 0;
+}
